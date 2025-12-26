@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Firestore Connectivity Check</title>
+  <style>
+    body { font-family: sans-serif; max-width: 720px; margin: 24px auto; padding: 0 12px; }
+    button { padding: 10px 14px; margin-right: 8px; }
+    pre { background: #f6f8fa; padding: 12px; border-radius: 8px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>Firestore Connectivity Check</h2>
+  <p>Tekan tombol untuk uji reachability ke firestore.googleapis.com (HTTPS).</p>
+  <button id="btnCheck">Check Now</button>
+  <pre id="log">Belum dijalankan.</pre>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const btn = document.getElementById('btnCheck');
+
+    async function check() {
+      logEl.textContent = 'Checking...';
+      try {
+        const start = performance.now();
+        const resp = await fetch('https://firestore.googleapis.com/', { method: 'GET' });
+        const text = await resp.text();
+        const ms = Math.round(performance.now() - start);
+        logEl.textContent =
+          `Status: ${resp.status}\nTime: ${ms} ms\nBody (truncated 500 chars):\n` +
+          text.slice(0, 500);
+      } catch (e) {
+        logEl.textContent = 'ERROR: ' + e;
+      }
+    }
+
+    btn.addEventListener('click', check);
+  </script>
+</body>
+</html>
